@@ -6,11 +6,13 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  role: "customer" | "seller";
+  sellerId?: string;
 }
 
 interface AuthContextValue {
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   register: (data: { email: string; password: string; firstName: string; lastName: string }) => Promise<void>;
   logout: () => void;
 }
@@ -33,15 +35,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const login = useCallback(async (email: string, _password: string) => {
-    // Mock login — always succeeds
-    const newUser: User = {
-      email,
-      firstName: email.split("@")[0],
-      lastName: "",
-    };
+  const login = useCallback(async (email: string, password: string): Promise<User> => {
+    let newUser: User;
+    if (email === "kontakt@runfab.pl" && password === "RunFab123") {
+      newUser = {
+        email,
+        firstName: "RunFab",
+        lastName: "",
+        role: "seller",
+        sellerId: "s13",
+      };
+    } else {
+      newUser = {
+        email,
+        firstName: email.split("@")[0],
+        lastName: "",
+        role: "customer",
+      };
+    }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
     setUser(newUser);
+    return newUser;
   }, []);
 
   const register = useCallback(async (data: { email: string; password: string; firstName: string; lastName: string }) => {
@@ -49,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: data.email,
       firstName: data.firstName,
       lastName: data.lastName,
+      role: "customer",
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
     setUser(newUser);

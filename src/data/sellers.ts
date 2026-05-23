@@ -109,6 +109,15 @@ export const sellers: Seller[] = [
     joinedYear: 2026,
     rating: 0,
   },
+  {
+    id: "s13",
+    name: "RunFab",
+    slug: "run-fab",
+    description: "Obuwie sportowe dla aktywnych. Polskiej marki, premium jakość.",
+    logo: "/images/sellers/run-fab.svg",
+    joinedYear: 2024,
+    rating: 4.8,
+  },
 ];
 
 export function getSeller(slug: string): Seller | undefined {

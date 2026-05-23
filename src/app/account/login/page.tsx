@@ -19,8 +19,8 @@ export default function LoginPage() {
       setError("Please fill in all fields.");
       return;
     }
-    await login(email, password);
-    router.push("/account");
+    const loggedInUser = await login(email, password);
+    router.push(loggedInUser.role === "seller" ? "/seller" : "/account");
   }
 
   return (
