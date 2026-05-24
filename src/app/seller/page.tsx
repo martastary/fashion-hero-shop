@@ -18,6 +18,11 @@ export default function SellerDashboard() {
     }
   }, [user, router]);
 
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production") return;
+    posthog.capture("promoted_banner_impression");
+  }, []);
+
   if (!user || user.role !== "seller") {
     return null;
   }
@@ -38,9 +43,11 @@ export default function SellerDashboard() {
       merchant_id: user!.sellerId ?? user!.email,
       timestamp: new Date().toISOString(),
     });
-    posthog.capture("promoted_banner_clicked", {
-      merchant_id: user!.sellerId ?? user!.email,
-    });
+    if (process.env.NODE_ENV === "production") {
+      posthog.capture("promoted_banner_clicked", {
+        merchant_id: user!.sellerId ?? user!.email,
+      });
+    }
     router.push("/podbij-listing");
   }
 

@@ -39,9 +39,11 @@ export default function PodbijListingPage() {
       email,
       timestamp: new Date().toISOString(),
     });
-    posthog.capture("promoted_waitlist_signup", {
-      merchant_id: merchantId,
-    });
+    if (process.env.NODE_ENV === "production") {
+      posthog.capture("promoted_waitlist_signup", {
+        merchant_id: merchantId,
+      });
+    }
 
     setTimeout(() => {
       setStatus("success");
