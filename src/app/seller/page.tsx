@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useAuth } from "@/components/auth-provider";
 import { salesData, bestSellers, runFabInfo } from "@/data/seller-dashboard";
 import { SalesChart } from "./sales-chart";
+import posthog from "posthog-js";
 import { trackEvent } from "@/lib/analytics";
 
 export default function SellerDashboard() {
@@ -36,6 +37,9 @@ export default function SellerDashboard() {
     trackEvent("promoted_banner_click", {
       merchant_id: user!.sellerId ?? user!.email,
       timestamp: new Date().toISOString(),
+    });
+    posthog.capture("promoted_banner_clicked", {
+      merchant_id: user!.sellerId ?? user!.email,
     });
     router.push("/podbij-listing");
   }

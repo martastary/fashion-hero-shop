@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
+import posthog from "posthog-js";
 import { CloseIcon, SearchIcon } from "./icons";
 import { products } from "@/data/products";
 
@@ -86,7 +87,15 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                       <Link
                         key={product.id}
                         href={`/products/${product.slug}`}
-                        onClick={onClose}
+                        onClick={() => {
+                          posthog.capture("product_searched", {
+                            query,
+                            product_id: product.id,
+                            product_name: product.name,
+                            results_count: results.length,
+                          });
+                          onClose();
+                        }}
                         className="flex items-center gap-4 p-2 rounded hover:bg-cream transition-colors"
                       >
                         <div

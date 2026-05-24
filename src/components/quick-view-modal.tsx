@@ -8,6 +8,7 @@ import { CloseIcon } from "./icons";
 import { ColorSwatches } from "./color-swatches";
 import { SizeSelector } from "./size-selector";
 import { useCart } from "./cart-provider";
+import posthog from "posthog-js";
 
 interface QuickViewModalProps {
   product: Product;
@@ -43,6 +44,16 @@ export function QuickViewModal({ product, onClose }: QuickViewModalProps) {
   function handleAddToCart() {
     if (!selectedSize) return;
     addItem(product, selectedColor, selectedSize);
+    posthog.capture("add_to_cart", {
+      product_id: product.id,
+      product_name: product.name,
+      product_slug: product.slug,
+      product_category: product.category,
+      price: product.price,
+      color: selectedColor.name,
+      size: selectedSize,
+      source: "quick_view",
+    });
     onClose();
   }
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import posthog from "posthog-js";
 import { useAuth } from "@/components/auth-provider";
 import { trackEvent } from "@/lib/analytics";
 
@@ -37,6 +38,9 @@ export default function PodbijListingPage() {
       merchant_id: merchantId,
       email,
       timestamp: new Date().toISOString(),
+    });
+    posthog.capture("promoted_waitlist_signup", {
+      merchant_id: merchantId,
     });
 
     setTimeout(() => {

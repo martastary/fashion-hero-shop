@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import posthog from "posthog-js";
 import { useAuth } from "@/components/auth-provider";
 
 export default function LoginPage() {
@@ -20,6 +21,15 @@ export default function LoginPage() {
       return;
     }
     const loggedInUser = await login(email, password);
+    posthog.identify(loggedInUser.email, {
+      email: loggedInUser.email,
+      first_name: loggedInUser.firstName,
+      role: loggedInUser.role,
+    });
+    posthog.capture("user_signed_in", {
+      email: loggedInUser.email,
+      role: loggedInUser.role,
+    });
     router.push(loggedInUser.role === "seller" ? "/seller" : "/account");
   }
 
